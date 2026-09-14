@@ -60,7 +60,8 @@ export default function OrganizePage() {
         });
       }
       setPages(items);
-    } catch {
+    } catch (err) {
+      console.error("Loading PDF for organize failed:", err);
       setError("ไม่สามารถอ่านไฟล์ PDF นี้ได้");
     } finally {
       pdf?.destroy();
@@ -119,7 +120,8 @@ export default function OrganizePage() {
       });
       const out = await outDoc.save();
       setResult(out);
-    } catch {
+    } catch (err) {
+      console.error("Saving organized PDF failed:", err);
       setError("ไม่สามารถบันทึกไฟล์ได้ กรุณาตรวจสอบว่าเป็นไฟล์ PDF ที่ไม่ได้ล็อกรหัสผ่าน");
     } finally {
       setBusy(false);

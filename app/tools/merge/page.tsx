@@ -44,7 +44,8 @@ export default function MergePage() {
       }
       const out = await merged.save();
       setResult(out);
-    } catch {
+    } catch (err) {
+      console.error("Merge failed:", err);
       setError("ไม่สามารถรวมไฟล์ได้ กรุณาตรวจสอบว่าเป็นไฟล์ PDF ที่ไม่ได้ล็อกรหัสผ่าน");
     } finally {
       setBusy(false);

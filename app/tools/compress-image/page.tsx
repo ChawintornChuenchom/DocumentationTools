@@ -54,7 +54,8 @@ export default function CompressImagePage() {
         })
       );
       setResults(compressed);
-    } catch {
+    } catch (err) {
+      console.error("Image compression failed:", err);
       setError("ไม่สามารถบีบอัดรูปภาพได้ กรุณาลองใหม่");
     } finally {
       setBusy(false);

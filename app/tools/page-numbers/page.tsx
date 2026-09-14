@@ -65,7 +65,8 @@ export default function PageNumbersPage() {
 
       const out = await doc.save();
       setResult(out);
-    } catch {
+    } catch (err) {
+      console.error("Page numbering failed:", err);
       setError("ไม่สามารถใส่เลขหน้าได้ กรุณาตรวจสอบว่าเป็นไฟล์ PDF ที่ไม่ได้ล็อกรหัสผ่าน");
     } finally {
       setBusy(false);

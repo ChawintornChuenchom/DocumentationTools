@@ -48,7 +48,8 @@ export default function PdfToJpgPage() {
 
       setZipName(`${baseName}-images.zip`);
       setResults(pages);
-    } catch {
+    } catch (err) {
+      console.error("PDF to JPG conversion failed:", err);
       setError("ไม่สามารถแปลงไฟล์นี้เป็นรูปภาพได้ กรุณาตรวจสอบว่าเป็นไฟล์ PDF ที่ไม่ได้ล็อกรหัสผ่าน");
     } finally {
       pdf?.destroy();

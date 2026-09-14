@@ -58,7 +58,7 @@ export function TopNav() {
               <FileText className="h-4 w-4" />
             </div>
             <span className="text-sm font-bold text-gray-900 dark:text-gray-100">
-              Documentation Tools
+              DoctoolS
             </span>
           </Link>
 

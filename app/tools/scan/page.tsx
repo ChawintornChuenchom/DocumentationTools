@@ -42,7 +42,8 @@ export default function ScanPage() {
         await videoRef.current.play();
       }
       setCameraOn(true);
-    } catch {
+    } catch (err) {
+      console.error("Opening camera failed:", err);
       setCameraError("ไม่สามารถเปิดกล้องได้ กรุณาอนุญาตการเข้าถึงกล้อง");
     }
   }
@@ -110,7 +111,8 @@ export default function ScanPage() {
       }
       const out = await doc.save();
       setResult(out);
-    } catch {
+    } catch (err) {
+      console.error("Scan conversion failed:", err);
       setError("รองรับเฉพาะไฟล์ JPG และ PNG เท่านั้น");
     } finally {
       setBusy(false);

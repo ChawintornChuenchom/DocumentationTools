@@ -84,7 +84,8 @@ export default function OcrPage() {
         pdf?.destroy();
         await worker.terminate();
       }
-    } catch {
+    } catch (err) {
+      console.error("OCR failed:", err);
       setError("ไม่สามารถอ่านข้อความจากไฟล์นี้ได้ กรุณาลองใหม่");
     } finally {
       setBusy(false);

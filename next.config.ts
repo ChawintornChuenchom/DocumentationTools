@@ -16,9 +16,13 @@ const isDev = process.env.NODE_ENV === "development";
 // 'unsafe-inline' to actually expose here.
 const CSP = [
   "default-src 'self'",
+  // 'wasm-unsafe-eval' (not covered by 'unsafe-inline') is required for
+  // tesseract.js's WebAssembly.instantiate() call — without it the wasm
+  // compile throws inside the worker and tesseract.js swallows the error,
+  // so OCR just hangs forever at "initializing" instead of failing loudly.
   isDev
-    ? "script-src 'self' 'unsafe-eval' 'unsafe-inline'"
-    : "script-src 'self' 'unsafe-inline'",
+    ? "script-src 'self' 'unsafe-eval' 'unsafe-inline' 'wasm-unsafe-eval' https://cdn.jsdelivr.net"
+    : "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://cdn.jsdelivr.net",
   // React writes inline `style` attributes (transforms, progress bars), which
   // CSP treats as inline styles — 'unsafe-inline' is required for those.
   "style-src 'self' 'unsafe-inline'",

@@ -56,7 +56,8 @@ export default function WatermarkPage() {
 
       const out = await doc.save();
       setResult(out);
-    } catch {
+    } catch (err) {
+      console.error("Watermarking failed:", err);
       setError("ไม่สามารถใส่ลายน้ำได้ กรุณาตรวจสอบว่าเป็นไฟล์ PDF ที่ไม่ได้ล็อกรหัสผ่าน");
     } finally {
       setBusy(false);

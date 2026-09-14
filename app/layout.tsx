@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Kanit } from "next/font/google";
 import { ThemeProvider } from "next-themes";
+import { Analytics } from "@vercel/analytics/next";
 import { TopNav } from "@/components/TopNav";
 import { BottomNav } from "@/components/BottomNav";
 import { PageHeader } from "@/components/PageHeader";
@@ -14,7 +15,7 @@ const kanit = Kanit({
 });
 
 export const metadata: Metadata = {
-  title: "Documentation Tools",
+  title: "DoctoolS",
   description: "รวมเครื่องมือจัดการไฟล์ PDF ใช้งานง่าย ประมวลผลในเบราว์เซอร์ ไม่ต้องอัปโหลดไฟล์ขึ้นเซิร์ฟเวอร์",
 };
 
@@ -39,6 +40,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <BottomNav />
           </SearchProvider>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );

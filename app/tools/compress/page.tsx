@@ -60,7 +60,8 @@ export default function CompressPage() {
 
       const out = await outDoc.save();
       setResult(out);
-    } catch {
+    } catch (err) {
+      console.error("PDF compression failed:", err);
       setError("ไม่สามารถบีบอัดไฟล์นี้ได้ กรุณาตรวจสอบว่าเป็นไฟล์ PDF ที่ไม่ได้ล็อกรหัสผ่าน");
     } finally {
       pdfjsDoc?.destroy();

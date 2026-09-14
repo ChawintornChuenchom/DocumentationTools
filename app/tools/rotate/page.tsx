@@ -46,7 +46,8 @@ export default function RotatePage() {
       }
       const out = await doc.save();
       setResult(out);
-    } catch {
+    } catch (err) {
+      console.error("Rotating PDF failed:", err);
       setError("ไม่สามารถหมุนไฟล์นี้ได้ กรุณาตรวจสอบว่าเป็นไฟล์ PDF ที่ไม่ได้ล็อกรหัสผ่าน");
     } finally {
       setBusy(false);

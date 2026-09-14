@@ -51,7 +51,8 @@ export default function JpgToPdfPage() {
       }
       const out = await doc.save();
       setResult(out);
-    } catch {
+    } catch (err) {
+      console.error("JPG to PDF conversion failed:", err);
       setError("รองรับเฉพาะไฟล์ JPG และ PNG เท่านั้น");
     } finally {
       setBusy(false);

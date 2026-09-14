@@ -68,7 +68,7 @@
 Bottom navigation (mobile-first) มี 2 ปุ่ม: **หน้าแรก / ตั้งค่า**
 (ตัด "เครื่องมือ" ออกเพราะซ้ำซ้อนกับหน้าแรก, ตัด "สแกน" ออกจาก nav แต่เครื่องมือสแกนยังเข้าถึงได้ผ่านการ์ดในหน้าแรก, ตัด "ล่าสุด" ออกเพราะไม่มีการเก็บประวัติการใช้งาน)
 
-**Desktop TopNav:** โลโก้ + ชื่อแบรนด์ "Documentation Tools" ทางซ้าย, ไอคอน หน้าแรก/ตั้งค่า ทางขวา (ไม่มีข้อความ) — "ตั้งค่า" เป็นปุ่มเปิด dropdown (ไม่ navigate ไปหน้า `/settings`) พร้อม backdrop เบลอฉากหลัง (`backdrop-blur-sm bg-black/5`) ปิดได้ด้วยคลิกนอกกรอบ/กด Escape/คลิก backdrop
+**Desktop TopNav:** โลโก้ + ชื่อแบรนด์ "DoctoolS" ทางซ้าย, ไอคอน หน้าแรก/ตั้งค่า ทางขวา (ไม่มีข้อความ) — "ตั้งค่า" เป็นปุ่มเปิด dropdown (ไม่ navigate ไปหน้า `/settings`) พร้อม backdrop เบลอฉากหลัง (`backdrop-blur-sm bg-black/5`) ปิดได้ด้วยคลิกนอกกรอบ/กด Escape/คลิก backdrop
 
 **สนับสนุนผู้พัฒนา:** ใน `SettingsPanel` มีหัวข้อ "สนับสนุน" กดแล้วเปิด modal แสดง QR โอนเงิน (`public/QR-Banking.jpg`) พร้อม backdrop เบลอเช่นกัน
 

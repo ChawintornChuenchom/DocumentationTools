@@ -29,7 +29,7 @@ export function SettingsPanel() {
               เกี่ยวกับแอป
             </p>
             <p className="text-xs text-gray-500 dark:text-gray-400">
-              Documentation Tools v0.1.0
+              DoctoolS v0.1.0
             </p>
           </div>
         </li>

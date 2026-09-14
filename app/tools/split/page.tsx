@@ -58,7 +58,10 @@ export default function SplitPage() {
     f.arrayBuffer()
       .then((buf) => PDFDocument.load(buf))
       .then((doc) => setPageCount(doc.getPageCount()))
-      .catch(() => setError("ไม่สามารถอ่านไฟล์ PDF นี้ได้"));
+      .catch((err) => {
+        console.error("Loading PDF for split failed:", err);
+        setError("ไม่สามารถอ่านไฟล์ PDF นี้ได้");
+      });
   }
 
   async function handleSplit() {
@@ -80,7 +83,8 @@ export default function SplitPage() {
       pages.forEach((p) => out.addPage(p));
       const outBytes = await out.save();
       setResult(outBytes);
-    } catch {
+    } catch (err) {
+      console.error("Splitting PDF failed:", err);
       setError("เกิดข้อผิดพลาดระหว่างแยกไฟล์");
     } finally {
       setBusy(false);
