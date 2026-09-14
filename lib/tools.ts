@@ -118,7 +118,7 @@ export const TOOLS: ToolDef[] = [
     title: "Word → PDF",
     description: "แปลงไฟล์ Word (.docx) เป็น PDF",
     icon: "word-to-pdf",
-    status: "soon",
+    status: "ready",
   },
   {
     slug: "pdf-to-word",
@@ -132,7 +132,7 @@ export const TOOLS: ToolDef[] = [
     title: "Excel → PDF",
     description: "แปลงไฟล์ Excel (.xlsx) เป็น PDF",
     icon: "excel-to-pdf",
-    status: "soon",
+    status: "ready",
   },
   {
     slug: "pdf-to-excel",
@@ -151,9 +151,9 @@ export const TOOLS: ToolDef[] = [
   {
     slug: "pdf-to-ppt",
     title: "PDF → PowerPoint",
-    description: "แปลง PDF ให้แก้ไขเป็นสไลด์ PowerPoint",
+    description: "แปลงแต่ละหน้า PDF เป็นสไลด์รูปภาพใน PowerPoint",
     icon: "pdf-to-ppt",
-    status: "soon",
+    status: "ready",
   },
   {
     slug: "protect",
