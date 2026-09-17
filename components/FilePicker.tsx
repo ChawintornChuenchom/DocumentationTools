@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { UploadCloud, X, ChevronUp, ChevronDown, FileIcon } from "lucide-react";
 
 function formatSize(bytes: number) {
@@ -25,6 +25,24 @@ export function FilePicker({
   label?: string;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // A filename-and-icon row gives no visual confirmation that e.g. a camera
+  // capture actually worked — a thumbnail does. Keyed by File identity so
+  // reordering doesn't churn object URLs, only additions/removals do.
+  // Object URL creation is synchronous, so it's derived directly via
+  // useMemo rather than mirrored into state from an effect; the effect
+  // below only handles the side effect of revoking old URLs.
+  const thumbUrls = useMemo(() => {
+    const map = new Map<File, string>();
+    for (const f of files) {
+      if (f.type.startsWith("image/")) map.set(f, URL.createObjectURL(f));
+    }
+    return map;
+  }, [files]);
+
+  useEffect(() => {
+    return () => thumbUrls.forEach((url) => URL.revokeObjectURL(url));
+  }, [thumbUrls]);
 
   function addFiles(list: FileList | null) {
     if (!list) return;
@@ -82,7 +100,16 @@ export function FilePicker({
               key={`${f.name}-${i}`}
               className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 dark:border-gray-800 dark:bg-gray-900"
             >
-              <FileIcon className="h-4 w-4 shrink-0 text-gray-400 dark:text-gray-500" />
+              {thumbUrls.has(f) ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={thumbUrls.get(f)}
+                  alt=""
+                  className="h-8 w-8 shrink-0 rounded object-cover"
+                />
+              ) : (
+                <FileIcon className="h-4 w-4 shrink-0 text-gray-400 dark:text-gray-500" />
+              )}
               <span className="flex-1 truncate text-sm text-gray-800 dark:text-gray-200">
                 {f.name}
               </span>

@@ -8,9 +8,10 @@ import { FilenameInput } from "@/components/FilenameInput";
 import { PrimaryButton } from "@/components/PrimaryButton";
 import { loadPdf, renderPageToCanvas } from "@/lib/pdfjs";
 import { loadForOcr, preprocessCanvasForOcr } from "@/lib/imagePreprocess";
+import { cleanupThaiOcrText } from "@/lib/thaiOcrCleanup";
 import { downloadBytes } from "@/lib/download";
 import { sanitizeFilename } from "@/lib/filename";
-import { Copy, Check } from "lucide-react";
+import { Copy, Check, TriangleAlert } from "lucide-react";
 
 const tool = getTool("ocr")!;
 
@@ -51,7 +52,7 @@ export default function OcrPage() {
     setStatus("กำลังเตรียมเครื่องมืออ่านข้อความ...");
 
     try {
-      const { createWorker } = await import("tesseract.js");
+      const { createWorker, PSM } = await import("tesseract.js");
       const worker = await createWorker(["eng", "tha"], undefined, {
         logger: (m) => {
           const label = STATUS_LABELS[m.status] ?? m.status;
@@ -60,6 +61,14 @@ export default function OcrPage() {
           if (typeof m.progress === "number") setProgress(m.progress);
         },
       });
+      // Default auto page-segmentation tries to split the image into
+      // multiple independent text "blocks" — on screenshots with colored
+      // chat bubbles or UI chrome, it can misdetect overlapping blocks and
+      // read the same line twice, or split single words apart at the
+      // boundary. SINGLE_BLOCK tells it to treat the whole image as one
+      // block of text read top-to-bottom, which matches documents, photos,
+      // and screenshots alike (all of this tool's expected input).
+      await worker.setParameters({ tessedit_pageseg_mode: PSM.SINGLE_BLOCK });
 
       let pdf: Awaited<ReturnType<typeof loadPdf>> | undefined;
       try {
@@ -70,18 +79,22 @@ export default function OcrPage() {
           const parts: string[] = [];
           for (let i = 1; i <= pdf.numPages; i++) {
             pageRef.current.current = i;
-            const canvas = await renderPageToCanvas(pdf, i, 2);
+            // Higher scale than other pdf.js uses in this app: Thai vowel/tone
+            // marks are small combining glyphs that need more pixels to be
+            // segmented correctly, or Tesseract misplaces them.
+            const canvas = await renderPageToCanvas(pdf, i, 3);
             preprocessCanvasForOcr(canvas);
             const { data } = await worker.recognize(canvas);
+            const cleaned = cleanupThaiOcrText(data.text);
             parts.push(
-              pdf.numPages > 1 ? `--- หน้า ${i} ---\n${data.text}` : data.text
+              pdf.numPages > 1 ? `--- หน้า ${i} ---\n${cleaned}` : cleaned
             );
           }
           setText(parts.join("\n\n"));
         } else {
           const canvas = await loadForOcr(f);
           const { data } = await worker.recognize(canvas);
-          setText(data.text);
+          setText(cleanupThaiOcrText(data.text));
         }
       } finally {
         pdf?.destroy();
@@ -118,6 +131,15 @@ export default function OcrPage() {
           เลือกไฟล์รูปภาพหรือ PDF แล้วแปลงข้อความในภาพให้อ่านและคัดลอกได้
           รองรับภาษาไทย เลขไทย และภาษาอังกฤษ
         </p>
+
+        <div className="mt-3 flex gap-2 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-300">
+          <TriangleAlert className="h-4 w-4 shrink-0" />
+          <p>
+            ผลลัพธ์จาก OCR <strong>อาจไม่แม่นยำ 100%</strong>
+            ขึ้นอยู่กับขนาดและคุณภาพของภาพต้นฉบับ กรุณา
+            <strong>ตรวจสอบข้อความก่อนนำไปใช้เสมอ</strong>
+          </p>
+        </div>
 
         <div className="mt-4">
           <FilePicker

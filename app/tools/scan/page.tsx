@@ -75,6 +75,10 @@ export default function ScanPage() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
     ctx.drawImage(video, 0, 0);
+    // One shot, then stop — with the camera left running it wasn't obvious
+    // a photo had actually been taken. The captured shot now shows as a
+    // thumbnail in the file list below; open the camera again for another page.
+    closeCamera();
     canvas.toBlob(
       (blob) => {
         if (!blob) return;

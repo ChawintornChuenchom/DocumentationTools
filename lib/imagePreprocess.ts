@@ -4,13 +4,27 @@
 // dark-dominant image and inverting it first measurably improves accuracy
 // for that case, at effectively no cost for normal light-background scans
 // (which are left untouched).
+// Thai vowel/tone marks are small combining glyphs stacked above or below
+// the base consonant — at low pixel resolution they blur into neighboring
+// characters and Tesseract misplaces or drops them, which reads as letters
+// "jumping around". Upscaling small images before recognition (not just
+// leaving it to Tesseract) gives the segmenter enough pixels to place them
+// correctly.
+const MIN_LONG_EDGE = 1800;
+const MAX_UPSCALE = 3;
+
 export async function loadForOcr(file: File): Promise<HTMLCanvasElement> {
   const bitmap = await createImageBitmap(file);
+  const longEdge = Math.max(bitmap.width, bitmap.height);
+  const scale = longEdge < MIN_LONG_EDGE ? Math.min(MAX_UPSCALE, MIN_LONG_EDGE / longEdge) : 1;
+
   const canvas = document.createElement("canvas");
-  canvas.width = bitmap.width;
-  canvas.height = bitmap.height;
+  canvas.width = Math.round(bitmap.width * scale);
+  canvas.height = Math.round(bitmap.height * scale);
   const ctx = canvas.getContext("2d")!;
-  ctx.drawImage(bitmap, 0, 0);
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
+  ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
   bitmap.close();
   preprocessCanvasForOcr(canvas);
   return canvas;
