@@ -7,6 +7,7 @@ import { FilePicker } from "@/components/FilePicker";
 import { FilenameInput } from "@/components/FilenameInput";
 import { PrimaryButton } from "@/components/PrimaryButton";
 import { loadPdf, renderPageToCanvas } from "@/lib/pdfjs";
+import { loadForOcr, preprocessCanvasForOcr } from "@/lib/imagePreprocess";
 import { downloadBytes } from "@/lib/download";
 import { sanitizeFilename } from "@/lib/filename";
 import { Copy, Check } from "lucide-react";
@@ -70,6 +71,7 @@ export default function OcrPage() {
           for (let i = 1; i <= pdf.numPages; i++) {
             pageRef.current.current = i;
             const canvas = await renderPageToCanvas(pdf, i, 2);
+            preprocessCanvasForOcr(canvas);
             const { data } = await worker.recognize(canvas);
             parts.push(
               pdf.numPages > 1 ? `--- หน้า ${i} ---\n${data.text}` : data.text
@@ -77,7 +79,8 @@ export default function OcrPage() {
           }
           setText(parts.join("\n\n"));
         } else {
-          const { data } = await worker.recognize(f);
+          const canvas = await loadForOcr(f);
+          const { data } = await worker.recognize(canvas);
           setText(data.text);
         }
       } finally {

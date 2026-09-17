@@ -30,6 +30,22 @@ export default function ScanPage() {
     };
   }, []);
 
+  // The <video> element only mounts once `cameraOn` is true, so
+  // `videoRef.current` is always null at the point openCamera() requests
+  // the stream — assigning srcObject there was a no-op and the preview
+  // stayed black. Assign it here instead, once the element actually exists.
+  useEffect(() => {
+    if (!cameraOn) return;
+    const video = videoRef.current;
+    const stream = streamRef.current;
+    if (!video || !stream) return;
+    video.srcObject = stream;
+    video.play().catch((err) => {
+      console.error("Starting camera preview failed:", err);
+      setCameraError("ไม่สามารถแสดงภาพจากกล้องได้ กรุณาลองใหม่");
+    });
+  }, [cameraOn]);
+
   async function openCamera() {
     setCameraError(null);
     try {
@@ -37,10 +53,6 @@ export default function ScanPage() {
         video: { facingMode: "environment" },
       });
       streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        await videoRef.current.play();
-      }
       setCameraOn(true);
     } catch (err) {
       console.error("Opening camera failed:", err);

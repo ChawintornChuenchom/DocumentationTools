@@ -8,6 +8,7 @@ import { FilePicker } from "@/components/FilePicker";
 import { FilenameInput } from "@/components/FilenameInput";
 import { PrimaryButton } from "@/components/PrimaryButton";
 import { PdfResultPreview } from "@/components/PdfResultPreview";
+import { embedThaiCapableFont, measureMixedScriptText, drawMixedScriptText } from "@/lib/mixedScriptText";
 
 const tool = getTool("watermark")!;
 
@@ -37,17 +38,18 @@ export default function WatermarkPage() {
     try {
       const bytes = await f.arrayBuffer();
       const doc = await PDFDocument.load(bytes);
-      const font = await doc.embedFont(StandardFonts.HelveticaBold);
+      const latinFont = await doc.embedFont(StandardFonts.HelveticaBold);
+      const fonts = await embedThaiCapableFont(doc, latinFont, "bold");
 
       for (const page of doc.getPages()) {
         const { width, height } = page.getSize();
         const size = Math.min(width, height) / 10;
-        const textWidth = font.widthOfTextAtSize(text, size);
-        page.drawText(text, {
+        const textWidth = measureMixedScriptText(text, fonts, size);
+        drawMixedScriptText(page, text, {
           x: width / 2 - textWidth / 2,
           y: height / 2,
           size,
-          font,
+          ...fonts,
           color: rgb(0.6, 0.6, 0.6),
           opacity: 0.3,
           rotate: degrees(45),
